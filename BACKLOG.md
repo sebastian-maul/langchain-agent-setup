@@ -5,7 +5,11 @@ This file tracks actionable tasks and milestones for the project. Update as prog
 - Mark refined tasks with [r] and completed tasks with [x].
 
 ## TODOs / Tasks
-- [ ] Integrate Microsoft AutoGen as backend
+- [r] Integrate Microsoft AutoGen as backend
+  - [x] Add AutoGen v0.6.1 as a project dependency (using uv)
+  - [ ] Implement minimal backend integration using AgentChat API (basic agent/team structure, local model integration with Ollama, message handling, workflow execution)
+  - [ ] Provide a simple entry point to demonstrate agent orchestration with local models
+  - [ ] Document integration, requirements, and usage in the README
 - [ ] Integrate Chainlit as frontend
 - [ ] Implement support for local models (Ollama, vLLM, etc.)
 - [ ] Set up PostgreSQL with Alembic migrations
