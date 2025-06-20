@@ -1,0 +1,9 @@
+provider:
+  - ollama:
+      model_server: http://localhost:11434
+      models:
+        - granite:
+            model_name: granite3.3:8b
+            temperature: 0.1
+            max_tokens: 2048
+            request_timeout: 120

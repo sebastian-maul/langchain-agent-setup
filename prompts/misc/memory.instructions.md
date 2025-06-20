@@ -1,8 +1,9 @@
 ---
 applyTo: '**'
 ---
-**Project Memory Database Usage**
+**Project Memory Database Usage (MCP Neo4j)**
 
+- Project memory is managed using the MCP Neo4j graph database. All memory operations (store, update, retrieve) should use the MCP Neo4j tools.
 - Only store, update, or retrieve information in the database that is directly relevant to the current project’s requirements, code, design decisions, or development context.
 - Do not use the database for general-purpose or unrelated data.
 - When storing information, ensure it is concise, accurate, and useful for future development or context recall.
