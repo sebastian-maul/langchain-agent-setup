@@ -1,10 +1,67 @@
-# Python-generated files
+# Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[oc]
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+.venv/
+venv/
 build/
 dist/
-wheels/
-*.egg-info
+*.egg-info/
+.eggs/
 
-# Virtual environments
-.venv
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# mypy
+.mypy_cache/
+.dmypy.json
+
+# Pytest
+.pytest_cache/
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor swap files
+*.swp
+*.swo
+
+# uv
+uv/
+uv.lock
+
+# Docker env files
+/docker/*.env
+
+# Local config overrides
+config/*.local.yaml
+
+# Logs
+*.log
+
+# SQLite DBs
+*.sqlite3
