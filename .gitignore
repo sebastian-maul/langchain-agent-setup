@@ -65,3 +65,10 @@ config/*.local.yaml
 
 # SQLite DBs
 *.sqlite3
+
+# mlFlow
+mlruns/
+mlartifacts/
+
+# private
+BACKLOG.md

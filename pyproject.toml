@@ -5,10 +5,16 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "aiofiles>=24.1.0",
-    "aiohttp>=3.12.13",
-    "autogen-agentchat>=0.6.1",
-    "autogen-core>=0.6.1",
-    "autogen-ext[ollama]>=0.6.1",
-    "chromadb>=1.0.13",
+    "beautifulsoup4>=4.13.4",
+    "duckduckgo-search>=8.0.4",
+    "langchain-community>=0.3.26",
+    "langchain-mcp-adapters>=0.1.7",
+    "langchain[ollama]>=0.3.25",
+    "langgraph>=0.4.8",
+    "lxml>=5.4.0",
+    "mcp-server-time>=0.6.2",
+    "mem0ai>=0.1.112",
+    "mlflow>=3.1.0",
+    "nest-asyncio>=1.6.0",
+    "playwright>=1.52.0",
 ]
