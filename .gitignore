@@ -48,7 +48,6 @@ Thumbs.db
 
 # Editor swap files
 *.swp
-*.swo
 
 # uv
 uv/
@@ -72,3 +71,6 @@ mlartifacts/
 
 # private
 BACKLOG.md
+prompts/
+.vscode/
+
