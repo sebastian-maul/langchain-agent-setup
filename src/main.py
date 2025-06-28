@@ -98,12 +98,6 @@ async def main():
         response = llm.invoke(enhanced_messages)
         return {"messages": [response]}
 
-    # agent = create_react_agent(
-    #     model=llm,
-    #     tools=tools,  # Add the web tool here
-    #     prompt="You are a helpful assistant. You can answer questions and perform tasks using the tools available to you."
-    # )
-
     graph_builder.add_node("chatbot", chatbot)
     tool_node = await tools_manager.get_tool_node()
     graph_builder.add_node("tools", tool_node)
