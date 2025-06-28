@@ -46,8 +46,8 @@ class MCPToolsManager:
                 "transport": "stdio",
             },
             "playwright": {
-                "command": "npx",
-                "args": ["-y", "@executeautomation/playwright-mcp-server"],
+                "command": "docker",
+                "args": ["run", "-i", "--rm", "--init", "--pull=always", "mcr.microsoft.com/playwright/mcp"],
                 "transport": "stdio",
             }
         }

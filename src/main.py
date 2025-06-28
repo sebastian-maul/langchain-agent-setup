@@ -61,7 +61,7 @@ async def main():
     tools = await tools_manager.get_tools()
 
     # Select model from available models
-    selected_model = "devstral:24b"  # Default selection
+    selected_model = "granite3.3:8b"  # Default selection
     # You can change this to any model from OLLAMA_MODELS array
     
     # Log model metadata to MLflow using the settings class
@@ -81,22 +81,53 @@ async def main():
         # Retrieve relevant long-term memories
         user_id = "default_user"  # In production, get from authentication
         last_message = state["messages"][-1] if state["messages"] else None
-        query = last_message.content if hasattr(last_message, 'content') else str(last_message)
+        
+        # Extract query from the last message
+        if hasattr(last_message, 'content'):
+            query = last_message.content
+        elif isinstance(last_message, dict) and 'content' in last_message:
+            query = last_message['content']
+        else:
+            query = str(last_message)
         
         # Get relevant memories for context
         relevant_memories = memory_manager.retrieve_relevant_memories(user_id, query)
         memory_context = memory_manager.format_memories_for_context(relevant_memories)
         
-        # Enhanced messages with memory context
-        enhanced_messages = state["messages"].copy()
+        # Debug: Print memory retrieval info
+        if relevant_memories:
+            print(f"[Memory Retrieved: {len(relevant_memories)} memories found for query: '{query[:50]}...']")
+            for i, mem in enumerate(relevant_memories[:3]):  # Show first 3 memories
+                print(f"  Memory {i+1}: {mem.get('type', 'unknown')} from {mem.get('timestamp', 'unknown time')}")
+        else:
+            print(f"[No memories found for query: '{query[:50]}...']")
+        
+        # Create enhanced messages with memory context
+        messages_for_llm = []
+        
+        # Add memory context as system message if available
         if memory_context:
             system_message = ChatMessage(
                 role="system", 
-                content=f"Context from previous interactions:\n{memory_context}\n\nUse this context to provide more personalized and informed responses."
+                content=f"IMPORTANT: Use the following context from previous interactions to answer the user's question. This context contains information the user has shared before:\n\n{memory_context}\n\nBased on this context, provide a personalized response that references relevant information from our past conversations."
             )
-            enhanced_messages.insert(0, system_message)
+            messages_for_llm.append(system_message)
+            print(f"[Memory Context Added: {len(memory_context)} characters with {len(relevant_memories)} memories]")
+        else:
+            print("[No relevant memory context found]")
         
-        response = llm.invoke(enhanced_messages)
+        # Add all existing messages from state
+        for msg in state["messages"]:
+            if isinstance(msg, dict):
+                # Convert dict to ChatMessage if needed
+                messages_for_llm.append(ChatMessage(
+                    role=msg.get("role", "user"),
+                    content=msg.get("content", str(msg))
+                ))
+            else:
+                messages_for_llm.append(msg)
+        
+        response = llm.invoke(messages_for_llm)
         return {"messages": [response]}
 
     graph_builder.add_node("chatbot", chatbot)
@@ -116,7 +147,6 @@ async def main():
 
     # mlflow.langchain.log_model(lc_model=llm)
 
-    # agent_response = ""
     async def stream_graph_updates(user_input: str):
         assistant_response = ""
         async for events in graph.astream({"messages": [{"role": "user", "content": user_input}]},
@@ -134,7 +164,8 @@ async def main():
         
         # Save memories based on the interaction
         if assistant_response:
-            await memory_manager.analyze_and_save_memories(user_input, assistant_response)
+            user_id = "default_user"
+            await memory_manager.analyze_and_save_memories(user_input, assistant_response, user_id)
         
         return assistant_response
 
