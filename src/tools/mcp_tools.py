@@ -26,11 +26,11 @@ class MCPToolsManager:
     def server_config(self) -> Dict[str, Dict[str, Any]]:
         """Get the MCP server configuration."""
         return {
-            "fetch": {
-                "command": "uvx",
-                "args": ["mcp-server-fetch"],
-                "transport": "stdio",
-            },
+            # "fetch": {
+            #     "command": "uvx",
+            #     "args": ["mcp-server-fetch"],
+            #     "transport": "stdio",
+            # },
             "filesystem": {
                 "command": "npx",
                 "args": [
@@ -45,6 +45,11 @@ class MCPToolsManager:
                 "args": ["mcp-server-time", "--local-timezone=Europe/Berlin"],
                 "transport": "stdio",
             },
+            "playwright": {
+                "command": "npx",
+                "args": ["-y", "@executeautomation/playwright-mcp-server"],
+                "transport": "stdio",
+            }
         }
     
     async def initialize_client(self) -> MultiServerMCPClient:

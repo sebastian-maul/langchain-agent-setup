@@ -7,6 +7,7 @@ from langchain_core.messages import ChatMessage, HumanMessage
 from langchain_core.messages.ai import AIMessageChunk
 
 from langgraph.prebuilt import create_react_agent
+import mlflow.langchain
 from config import MLflowLoggingSettings
 from tools import MCPToolsManager, MemoryManager
 from typing import Annotated
@@ -112,6 +113,8 @@ async def main():
     graph_builder.add_edge(START, "chatbot")
 
     graph = graph_builder.compile(checkpointer=memory)
+
+    # mlflow.langchain.log_model(lc_model=llm)
 
     # agent_response = ""
     async def stream_graph_updates(user_input: str):
