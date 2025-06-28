@@ -69,8 +69,10 @@ async def main():
 
     llm = ChatOllama(
         model=selected_model,
-        temperature=0.1,
+        temperature=0.2,
         num_predict=2000,
+        top_k=5,
+        top_p=0.95,
         # other params...
     ).bind_tools(tools)
 
@@ -102,32 +104,34 @@ async def main():
         else:
             print(f"[No memories found for query: '{query[:50]}...']")
         
-        # Create enhanced messages with memory context
-        messages_for_llm = []
+        # Use the original state messages and add memory context to the last user message
+        # instead of creating a separate system message
+        messages_to_use = state["messages"].copy()
         
-        # Add memory context as system message if available
-        if memory_context:
-            system_message = ChatMessage(
-                role="system", 
-                content=f"IMPORTANT: Use the following context from previous interactions to answer the user's question. This context contains information the user has shared before:\n\n{memory_context}\n\nBased on this context, provide a personalized response that references relevant information from our past conversations."
-            )
-            messages_for_llm.append(system_message)
-            print(f"[Memory Context Added: {len(memory_context)} characters with {len(relevant_memories)} memories]")
+        if memory_context and messages_to_use:
+            # Find the last user message and enhance it with memory context
+            for i in range(len(messages_to_use) - 1, -1, -1):
+                msg = messages_to_use[i]
+                if (hasattr(msg, 'type') and msg.type == 'human') or \
+                   (isinstance(msg, dict) and msg.get('role') == 'user'):
+                    # Enhance the user message with memory context
+                    original_content = msg.content if hasattr(msg, 'content') else msg.get('content', str(msg))
+                    enhanced_content = f"{original_content}\n\n[Memory Context: {memory_context}]"
+                    
+                    if hasattr(msg, 'content'):
+                        # Create a new message with enhanced content
+                        enhanced_msg = HumanMessage(content=enhanced_content)
+                        messages_to_use[i] = enhanced_msg
+                    else:
+                        # Update dict-style message
+                        messages_to_use[i] = {**msg, 'content': enhanced_content}
+                    
+                    print(f"[Memory Context Added: {len(memory_context)} characters with {len(relevant_memories)} memories]")
+                    break
         else:
             print("[No relevant memory context found]")
-        
-        # Add all existing messages from state
-        for msg in state["messages"]:
-            if isinstance(msg, dict):
-                # Convert dict to ChatMessage if needed
-                messages_for_llm.append(ChatMessage(
-                    role=msg.get("role", "user"),
-                    content=msg.get("content", str(msg))
-                ))
-            else:
-                messages_for_llm.append(msg)
-        
-        response = llm.invoke(messages_for_llm)
+
+        response = llm.invoke(messages_to_use)
         return {"messages": [response]}
 
     graph_builder.add_node("chatbot", chatbot)
